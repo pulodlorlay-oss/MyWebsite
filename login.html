@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - EngiArch Books</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='clean.css') }}">
+    <style>
+        /* Legacy overrides */
+    </style>
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+            /* Gradient matching the photo: Light green to dark teal-green */
+            background: linear-gradient(180deg, lch(47.14% 34.48 142.12) 0%, #0e240f 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- BACKGROUND DECORATION (Math Symbols & Globe) --- */
+        .bg-decor {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            font-size: 7rem;
+            color: rgba(0, 0, 0, 0.15); /* Faint black like in photo */
+            transform: rotate(-5deg);
+            z-index: 1;
+            pointer-events: none;
+            text-align: right;
+            line-height: 0.8;
+        }
+
+        /* --- HEADER (Logo and Text Placement) --- */
+        header {
+            display: flex;
+            align-items: center;
+            padding: 30px 0 0 40px; /* Aligned to the top left */
+            z-index: 2;
+        }
+
+        .logo {
+            width: 160px; /* Larger logo per image */
+            height: auto;
+            margin-right: 25px;
+        }
+
+        .title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-title {
+            font-size: 6.5rem; /* Massive bold font */
+            font-weight: bold;
+            margin: 0;
+            line-height: 0.9;
+            color: black;
+        }
+
+        .sub-title {
+            font-size: 1.8rem;
+            margin-top: 5px;
+            color: black;
+            font-weight: normal;
+        }
+
+        /* --- LOGIN BOX (Centered Square) --- */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .login-box {
+            background-color: #528053; /* Sage green from image */
+            padding: 50px;
+            width: 450px;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        h2 { 
+            font-size: 3.5rem; 
+            margin-bottom: 40px; 
+            margin-top: 0; 
+            font-weight: normal; 
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 30px;
+            border: none;
+            background-color: #bebaba; /* Light grey */
+            box-sizing: border-box;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #757575;
+        }
+
+        .login-btn {
+            width: 85%;
+            padding: 15px;
+            background-color: #b8b3b3;
+            border: none;
+            font-family: 'Times New Roman', serif;
+            font-weight: normal;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .login-btn:hover { background-color: #333; color: rgb(179, 177, 177); }
+
+        .signup-link {
+            color: black;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 4;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="{{ url_for('static', filename='cea logo.png') }}" alt="CEA Logo" class="logo">
+        <div class="title-group">
+            <div class="main-title">EngiArch Books</div>
+            <div class="sub-title">COLLEGE OF ENGINEERING AND ARCHITECTURE</div>
+        </div>
+    </header>
+
+    <main>
+        <div class="login-box">
+            <h2>WELCOME!</h2>
+            <div id="error-msg" class="error-msg">
+            <form action="/login" method="POST" class="login-form">
+                <input type="text" name="student_no" placeholder="STUDENT NUMBER" required>
+                <input type="password" name="password" placeholder="PASSWORD (NUMBERS ONLY)" id="login-password" required>
+                <button type="submit" class="login-btn">LOG IN</button>
+            </form>
+
+            <script>
+                const loginForm = document.querySelector('form[action="/login"]');
+                const pwInput = document.getElementById('login-password');
+                const errorDiv = document.getElementById('error-msg') || document.createElement('div'); // Fallback
+
+                pwInput.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    errorDiv.style.display = 'none';
+                });
+
+                loginForm.addEventListener('submit', function(e) {
+                    if (pwInput.value.length < 4) {
+                        e.preventDefault();
+                        errorDiv.textContent = 'Password must be at least 4 numbers.';
+        errorDiv.className = 'error-msg';
+                        return;
+                    }
+                });
+
+                // Flask flash - safe for non-Jinja
+                document.addEventListener('DOMContentLoaded', function() {
+                    const flashedErrors = document.querySelectorAll('.flash-error');
+                    if (flashedErrors.length > 0) {
+                        errorDiv.textContent = flashedErrors[0].textContent;
+                        errorDiv.style.display = 'block';
+                    }
+                });
+            </script>
+            <a href="/signup_page" class="signup-link">Don't have an account? Sign Up</a>
+        </div>
+    </main>
+
+    <div class="bg-decor">
+        ∑ + ÷ <br>
+        ∫ π √ <br>
+    </div>
+    <footer>PRODUCED BY BSCpE-2B</footer>
+</body>
+</html>

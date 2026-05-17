@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EngiArch Books - Library</title>
+    <style>
+        /* 1. RESET & LOCK BODY */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; padding: 0; 
+            font-family: 'Times New Roman', serif; 
+            background-color: #d1d9d1; 
+            height: 100vh; 
+            width: 100vw;
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; /* Stops the whole page from bouncing */
+        }
+
+        /* 2. THE HEADER (Always at the Top) */
+        header {
+            height: 80px;
+            background-color: #8fa883;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 2px solid #6b8e61;
+            flex-shrink: 0;
+            z-index: 5000; /* Highest Priority */
+        }
+        .logo-group { display: flex; align-items: center; gap: 10px; }
+        .logo-group img { width: 45px; height: 45px; object-fit: contain; }
+        .header-icons { font-size: 2rem; display: flex; gap: 15px; }
+
+        /* 3. THE NAVIGATION BAR (The Part You Couldn't Touch) */
+        /* We use a dedicated div with high z-index and no overlapping margins */
+        .navigation-safe-zone {
+            height: 80px;
+            background-color: #d1d9d1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 6000; /* Above EVERYTHING else */
+        }
+        
+        .nav-pill {
+            background-color: #8fa883;
+            color: white;
+            padding: 12px 40px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            display: block;
+            pointer-events: auto !important; /* Force browser to allow touch/click */
+        }
+        .nav-pill:hover { background-color: #4d6345; }
+        .nav-pill.active { background-color: #4d6345; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); }
+
+        /* 4. THE BOOK SCROLL AREA (The Swipe Section) */
+        main {
+            flex: 1;
+            overflow-y: scroll; /* Only this part swipes up and down */
+            scroll-snap-type: y mandatory;
+            position: relative;
+            z-index: 10;
+        }
+        main::-webkit-scrollbar { display: none; } /* Clean look */
+
+        .back-arrow {
+            position: fixed;
+            left: 20px;
+            top: 180px;
+            width: 40px;
+            z-index: 4000;
+            cursor: pointer;
+        }
+
+        .swipe-page {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            scroll-snap-align: start;
+            padding: 20px;
+        }
+
+        /* 5. THE BOOKS (Based on your images) */
+        .book-container {
+            background-color: #9fb398;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+        }
+        .book-container img {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            border: 1px solid #333;
+            margin-bottom: 15px;
+        }
+        .book-title { font-weight: bold; font-size: 0.9rem; margin-bottom: 15px; text-transform: uppercase; }
+        
+        .borrow-btn {
+            background-color: #4d6345;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        footer { height: 60px; background-color: #4d6345; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-group">
+            <img src="{{ url_for('static', filename='cea logo.png') }}">
+            <img src="{{ url_for('static', filename='Nwssu logo.jpg') }}">
+            <div style="font-size: 0.75rem; font-weight: bold; line-height: 1.1;">CEA<br>DIGITAL LIBRARY</div>
+        </div>
+        <div style="text-align: center;">
+            <h1 style="margin: 0; font-size: 1.5rem;">EngiArch Books</h1>
+            <small>COLLEGE OF ENGINEERING AND ARCHITECTURE</small>
+        </div>
+        <span onclick="toggleMenu()">☰ 🛒</span>
+    </div>
+    </header>
+
+    <!-- Menu removed per request -->
+    <div id="menuOverlay" class="overlay" onclick="toggleMenu()"></div>
+
+    <div class="navigation-safe-zone">
+        <a href="/home" class="nav-pill">HOME</a>
+        <a href="/course" class="nav-pill">COURSE</a>
+        <a href="/books" class="nav-pill active">BOOKS</a>
+        <a href="/profile" class="nav-pill">MORE</a>
+    </div>
+
+    <main>
+        <img src="{{ url_for('static', filename='back_arrow.png') }}" class="back-arrow" onclick="history.back()">
+
+        <section class="swipe-page">
+            <div class="book-container">
+                <img src="{{ url_for('static', filename='clean_code.png') }}">
+                <div class="book-title">Clean Code</div>
+                <button class="borrow-btn" onclick="runBorrow(1)">BORROW</button>
+            </div>
+            <div class="book-container">
+                <img src="{{ url_for('static', filename='pragmatic.png') }}">
+                <div class="book-title">The Pragmatic Programmer</div>
+                <button class="borrow-btn" onclick="runBorrow(2)">BORROW</button>
+            </div>
+            <div class="book-container">
+                <img src="{{ url_for('static', filename='handbook.png') }}">
+                <div class="book-title">Computer Engineering Handbook</div>
+                <button class="borrow-btn" onclick="runBorrow(3)">BORROW</button>
+            </div>
+        </section>
+
+        <section class="swipe-page">
+            <div class="book-container">
+                <img src="{{ url_for('static', filename='digital_design.jpg') }}">
+                <div class="book-title">Digital Design & Microprocessor</div>
+                <button class="borrow-btn" onclick="runBorrow(4)">BORROW</button>
+            </div>
+            <div class="book-container">
+                <img src="{{ url_for('static', filename='apps.jpg') }}">
+                <div class="book-title">Computer Engineering Applications</div>
+                <button class="borrow-btn" onclick="runBorrow(5)">BORROW</button>
+            </div>
+            <div class="book-container">
+                <img src="{{ url_for('static', filename='basic.jpg') }}">
+                <div class="book-title">Basic of Computer Engineering</div>
+                <button class="borrow-btn" onclick="runBorrow(6)">BORROW</button>
+            </div>
+        </section>
+    </main>
+
+    <footer></footer>
+
+    <script>
+        function runBorrow(bookId) {
+            if (confirm("Would you like to borrow this book?")) {
+                window.location.href = "/borrow/" + bookId;
+            }
+        }
+    </script>
+</body>
+</html>

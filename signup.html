@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up - EngiArch Books</title>
+    <style>
+        body {
+            margin: 0; font-family: 'Times New Roman', serif;
+            background: linear-gradient(135deg, #2f7642, #092b12);
+            height: 100vh; display: flex; align-items: center; justify-content: center; color: white;
+        }
+        .signup-box { background-color: #8fa883; padding: 40px; width: 400px; text-align: center; color: black; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: none; background: #d9d9d9; box-sizing: border-box; }
+        .reg-btn { width: 100%; padding: 12px; background: #184c21; color: white; border: none; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="signup-box">
+        <h2>CREATE ACCOUNT</h2>
+        <form action="/register" method="POST">
+            <input type="text" name="name" placeholder="FULL NAME" required>
+            <input type="text" name="student_no" placeholder="STUDENT NUMBER" required>
+            <input type="password" name="password" placeholder="PASSWORD (NUMBERS ONLY)" id="signup-password" required>
+            <input type="text" name="course" placeholder="COURSE (e.g. BSCPE)" required>
+            <button type="submit" class="reg-btn">REGISTER</button>
+        </form>
+
+        <script>
+            const signupForm = document.querySelector('form[action="/register"]');
+            const pwInput = document.getElementById('signup-password');
+
+            pwInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+            signupForm.addEventListener('submit', function(e) {
+                if (pwInput.value.length < 4) {
+                    e.preventDefault();
+                    alert('Password must be at least 4 numbers.');
+                }
+            });
+        </script>
+
+    </div>
+
+</body>
+</html>
+

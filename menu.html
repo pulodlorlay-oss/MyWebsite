@@ -1,0 +1,39 @@
+<div id="sideMenu" class="sidebar">
+        <div class="sidebar-header">
+            <h3>USER RECORD</h3>
+            <span style="font-size:2rem; cursor:pointer;" onclick="toggleMenu()">×</span>
+        </div>
+        <div class="sidebar-content">
+            <div class="profile-circle">
+                {{ session['user_name'][0] if session['user_name'] else 'U' }}
+            </div>
+            <div class="info-card">
+                <div class="info-line">
+                    <span class="info-label">NAME</span>
+                    <span class="info-value">{{ session['user_name'] }}</span>
+                </div>
+                <div class="info-line">
+                    <span class="info-label">STUDENT NO</span>
+                    <span class="info-value">{{ session['student_no'] }}</span>
+                </div>
+                <div class="info-line">
+                    <span class="info-label">ROLE</span>
+                    <span class="info-value">{{ session['role']|upper if session['role'] else 'STUDENT' }}</span>
+                </div>
+                <div class="info-line">
+                    <span class="info-label">COURSE</span>
+                    <span class="info-value">{{ session['course'] }}</span>
+                </div>
+            </div>
+            <nav style="display:flex; flex-direction:column; gap:15px;">
+                {% if session['role'] == 'admin' %}
+                <a href="/admin" style="text-decoration:none; color:black; font-weight:bold;">Admin Dashboard</a>
+                {% endif %}
+                <a href="/home" style="text-decoration:none; color:black; font-weight:bold;">Home</a>
+                <a href="/courses" style="text-decoration:none; color:black; font-weight:bold;">Courses</a>
+                <a href="/books" style="text-decoration:none; color:black; font-weight:bold;">Books</a>
+                <a href="/profile" style="text-decoration:none; color:black; font-weight:bold;">Profile</a>
+                <a href="/logout" style="text-decoration:none; color:#b91c1c; font-weight:bold;">Logout</a>
+            </nav>
+        </div>
+    </div>

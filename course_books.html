@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course_name }} Books - EngiArch Digital Library</title>
+    <style>
+        :root {
+            --primary-green: #8fa883;
+            --dark-green: #4d6345;
+            --bg-grey: #d1d9d1;
+            --card-bg: #9fb398;
+        }
+        body {
+            margin: 0; font-family: 'Times New Roman', serif; background-color: var(--bg-grey); overflow-x: hidden;
+        }
+        header {
+            background-color: var(--primary-green); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #6b8e61;
+        }
+        .logo-section { display: flex; align-items: center; gap: 10px; }
+        .logo-section img { width: 50px; height: auto; }
+        .logo-text { font-size: 0.8rem; font-weight: bold; line-height: 1.2; }
+        .title-section { text-align: center; flex-grow: 1; }
+        .title-section h1 { margin: 0; font-size: 1.8rem; }
+        .title-section p { margin: 0; font-size: 0.7rem; letter-spacing: 1px; }
+        .icons { display: flex; gap: 15px; font-size: 1.8rem; cursor: pointer; }
+        .nav-bar { display: flex; justify-content: center; gap: 15px; padding: 20px 0; background-color: var(--bg-grey); }
+        .nav-btn { background-color: var(--primary-green); color: white; padding: 10px 40px; border-radius: 25px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .nav-btn:hover { background-color: var(--dark-green); }
+        .nav-btn.active { background-color: var(--dark-green); }
+        .course-header { text-align: center; padding: 50px 20px; background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; margin-bottom: 40px; }
+        .course-header h1 { font-size: 3rem; margin: 0 0 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .course-header p { margin: 0; font-size: 1.3rem; opacity: 0.9; }
+        .books-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .book-card { background-color: var(--card-bg); padding: 20px; text-align: center; box-shadow: 5px 5px 15px rgba(0,0,0,0.1); border-radius: 8px; transition: transform 0.2s; }
+        .book-card:hover { transform: translateY(-5px); }
+        .book-cover { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; background-color: #ddd; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: #666; overflow: hidden; }
+        .book-cover-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .book-title { font-weight: bold; font-size: 1.2rem; margin-bottom: 8px; color: var(--dark-green); }
+        .book-author { font-size: 0.95rem; color: #555; margin-bottom: 10px; }
+        .book-status { padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; }
+        .status-available { background-color: #4CAF50; color: white; }
+        .borrow-btn { background-color: var(--dark-green); color: white; border: none; padding: 12px 30px; font-weight: bold; border-radius: 25px; cursor: pointer; width: 100%; font-size: 1rem; transition: background-color 0.3s; }
+        .borrow-btn:hover { background-color: #3a4f30; }
+        .no-books { text-align: center; padding: 60px; color: var(--dark-green); font-size: 1.2rem; }
+        .back-btn {
+            background-color: var(--dark-green);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 25px;
+            margin: 20px auto 40px;
+            display: block;
+            width: fit-content;
+            box-shadow: 0 4px 12px rgba(77,99,69,0.4);
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        .back-btn:hover {
+            background-color: var(--primary-green);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(77,99,69,0.6);
+        }
+        @media (max-width: 768px) { .books-grid { grid-template-columns: 1fr; gap: 20px; } .nav-bar { flex-wrap: wrap; gap: 10px; } .course-header h1 { font-size: 2rem; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='cea logo.png') }}" alt="CEA Logo">
+            <div class="logo-text">CEA<br>DIGITAL LIBRARY</div>
+        </div>
+        <div class="title-section">
+            <h1>{{ course_name }} Books</h1>
+            <p>{{ book_count }} Available Books</p>
+        </div>
+        <span onclick="toggleMenu()">☰</span>
+        </div>
+    </header>
+
+    <!-- Menu removed per request -->
+    <div id="menuOverlay" class="overlay" onclick="toggleMenu()"></div>
+    <nav class="nav-bar">
+        <a href="/home" class="nav-btn">HOME</a>
+        <a href="/courses" class="nav-btn">COURSES</a>
+        <a href="/books" class="nav-btn">ALL BOOKS</a>
+        <a href="/profile" class="nav-btn">PROFILE</a>
+    </nav>
+    <a href="/courses" class="back-btn">← BACK TO COURSES</a>
+    <div class="books-grid">
+
+        {% if course_books %}
+
+            {% for book in course_books %}
+            <div class="book-card">
+                {% if course_name == 'CIVIL ENGINEERING' %}
+                    <div class="book-cover">
+                        <img class="book-cover-img" src="{{ url_for('static', filename='civil-engineering/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" />
+                    </div>
+                {% elif course_name == 'ARCHITECTURE' %}
+                    <div class="book-cover">
+                        {# Images in static/architecture/ are jpg filenames with spaces. Match by title where possible. #}
+                        {% if book.title == 'Theory of Architecture' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='architecture/the theory of architecture.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Building Construction' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='architecture/building construction.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'AutoCAD Architecture' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='architecture/autocad for architecture.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Architectural Design' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='architecture/architectural graphic standards.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Architectural Graphics' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='architecture/a pattern language.jpg') }}" alt="{{ book.title }}" />
+                        {% else %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='architecture/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" />
+                        {% endif %}
+                    </div>
+
+                {% elif course_name == 'COMPUTER ENGINEERING' %}
+                    <div class="book-cover">
+                        {# Images in this page should match the book title/author from DB. #}
+                        {% if book.title == 'Computer Networks' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='computer-engineering/' ~ 'computer networks.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Data Structures and Algorithms' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='computer-engineering/' ~ 'microcomputer hardware design.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Digital Logic Design' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='computer-engineering/' ~ 'programming logic formulation.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Operating Systems' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='computer-engineering/' ~ 'Operating Systems.webp') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Introduction to Programming' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='computer-engineering/' ~ 'software engineering.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Computer Organization' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='computer-engineering/' ~ 'Computer Organization.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Database Systems' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='computer-engineering/' ~ 'Database Systems.webp') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Embedded Systems' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='computer-engineering/' ~ 'Embedded Systems.jpg') }}" alt="{{ book.title }}" />
+                        {% else %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='computer-engineering/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" />
+                        {% endif %}
+                    </div>
+
+                {% elif course_name == 'ELECTRONICS ENGINEERING' %}
+                    <div class="book-cover">
+                        {% if book.title == 'Electronic Devices' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electronics-engineering/' ~ 'modern digital electronics.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Digital Signal Processing' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electronics-engineering/' ~ 'digital signal processing.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Analog Circuits' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electronics-engineering/' ~ 'electronic communication systems.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Microelectronics' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electronics-engineering/' ~ 'microelectronic circuits.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Communication Systems' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electronics-engineering/' ~ 'communication systems.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Principles of Electronic Communication Systems' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electronics-engineering/' ~ 'electronic communication systems.jpg') }}" alt="{{ book.title }}" />
+                        {% else %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electronics-engineering/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" />
+                        {% endif %}
+                    </div>
+
+                {% elif course_name == 'MECHANICAL ENGINEERING' %}
+                    <div class="book-cover">
+                        {% if book.title == 'Thermodynamics' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='mechanical-engineering/' ~ 'control systems engineering.png') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Fluid Mechanics' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='mechanical-engineering/' ~ 'Fluid Mechanics.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Heat Transfer' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='mechanical-engineering/' ~ 'Manufacturing Engineering.png') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Strength of Materials' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='mechanical-engineering/' ~ 'Engineering Mechanics Dynamics.png') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Machine Design' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='mechanical-engineering/' ~ 'Machine Design.png') }}" alt="{{ book.title }}" />
+                        {% else %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='mechanical-engineering/' ~ book.title ~ '.png') }}" alt="{{ book.title }}" />
+                        {% endif %}
+                    </div>
+
+                {% elif course_name == 'ELECTRICAL ENGINEERING' %}
+                    <div class="book-cover">
+                        {# electrical engineering images in static/electrical-engineering/ use filenames with spaces. #}
+                        {% if book.title == 'Circuit Analysis' or book.title == 'Introduction to Electric Circuits' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electrical-engineering/' ~ 'fundamentals of electric circuits.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Electromagnetics' or book.title == 'Electromagnetic Fields and Waves' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electrical-engineering/' ~ 'field and wave electromagnetics.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Power Systems' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electrical-engineering/' ~ 'principles of electric machines and power electronics.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Signals and Systems' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electrical-engineering/' ~ 'digital control of dynamic systems.jpg') }}" alt="{{ book.title }}" />
+                        {% elif book.title == 'Control Systems' %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electrical-engineering/' ~ 'engineering circuit analysis.jpg') }}" alt="{{ book.title }}" />
+                        {% else %}
+                            <img class="book-cover-img" src="{{ url_for('static', filename='electrical-engineering/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" />
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="book-cover">📚 {{ book.title[:20] }}...</div>
+                {% endif %}
+                <div class="book-title">{{ book.title }}</div>
+                <div class="book-author">by {{ book.author }}</div>
+                <div class="book-status status-available">Available</div>
+                <a href="{{ url_for('borrow_book', book_id=book.id) }}" class="borrow-btn">BORROW BOOK</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-books">No available books in this course.</div>
+        {% endif %}
+    </div>
+    <script>
+        function toggleMenu() {
+            const sidebar = document.getElementById("sideMenu");
+            const overlay = document.getElementById("menuOverlay");
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+    </script>
+</body>
+</html>

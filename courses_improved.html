@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EngiArch Books - Courses</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Times New Roman', serif; background: linear-gradient(135deg, #d1d9d1 0%, #b8c6b8 100%); overflow-x: hidden; }
+
+        /* NAVBAR */
+        .navbar { background: linear-gradient(90deg, #8fa883, #6b8e61); padding: 15px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #4d6345; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .nav-logo-group { display: flex; align-items: center; }
+        .nav-logo-group img { width: 80px; margin-right: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3)); }
+        .nav-title-center { text-align: center; flex-grow: 1; }
+        .nav-title-center h1 { margin: 0; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .nav-icons { display: flex; gap: 20px; font-size: 2.2rem; cursor: pointer; color: white; }
+
+        /* SIDEBAR - Improved */
+        .sidebar { height: 100%; width: 340px; position: fixed; z-index: 1001; top: 0; right: -340px; background: linear-gradient(180deg, #8fa883, #6b8e61); box-shadow: -8px 0 25px rgba(0,0,0,0.4); transition: 0.4s cubic-bezier(0.25,0.46,0.45,0.94); display: flex; flex-direction: column; }
+        .sidebar.active { right: 0; }
+        .sidebar-header { background: linear-gradient(90deg, #4d6345, #3a4f30); color: white; padding: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-content { padding: 30px; flex: 1; overflow-y: auto; }
+        .profile-circle { width: 80px; height: 80px; background: linear-gradient(45deg, #4d6345, #6b8e61); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 25px; border: 4px solid rgba(255,255,255,0.9); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .info-card { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px; border-left: 6px solid rgba(255,255,255,0.4); margin-bottom: 25px; }
+        .info-line { margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 6px; }
+        .info-label { font-size: 0.7rem; font-weight: bold; color: white; opacity: 0.9; display: block; }
+        .info-value { font-size: 1.1rem; color: white; font-weight: 500; }
+
+        /* Navigation Pills */
+        .button-bar { display: flex; justify-content: center; gap: 20px; padding: 25px 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        .nav-pill { background: linear-gradient(45deg, #8fa883, #6b8e61); color: white; padding: 12px 45px; border-radius: 30px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(139,168,131,0.4); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .nav-pill::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: left 0.5s; }
+        .nav-pill:hover::before { left: 100%; }
+        .nav-pill:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(139,168,131,0.6); }
+        .nav-pill.active { background: linear-gradient(45deg, #4d6345, #3a4f30); transform: translateY(-2px); }
+
+        /* Enhanced Course Grid */
+        .course-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, 320px); 
+            gap: 30px; 
+            padding: 50px 40px; 
+            max-width: 1400px; 
+            margin: 0 auto;
+            justify-content: center;
+        }
+        .course-card { 
+            width: 280px; 
+            height: 280px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(230,233,230,0.85)); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255,255,255,0.4); 
+            border-left: 6px solid #4d6345; 
+            padding: 25px 20px; 
+            text-align: center; 
+            font-weight: 600; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9); 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+            border-radius: 18px; 
+            position: relative; 
+            overflow: hidden;
+            margin: 0 auto 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .course-card::before { 
+            content: attr(data-icon); 
+            font-size: 3.2rem; 
+            display: block; 
+            margin-bottom: 12px; 
+            opacity: 0.12; 
+            font-weight: 100; 
+        }
+        .course-card:hover { 
+            transform: translateY(-8px) scale(1.02); 
+            box-shadow: 0 20px 45px rgba(0,0,0,0.2), 0 0 25px rgba(139,168,131,0.35); 
+            border-left-color: #3a4f30;
+        }
+        .course-card h3 { 
+            margin: 0 0 8px 0; 
+            font-size: 1.4rem; 
+            color: #4d6345; 
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.9); 
+        }
+        .course-card p { 
+            margin: 0; 
+            color: #666; 
+            font-size: 0.9rem; 
+            line-height: 1.4; 
+        }
+        .course-badge { 
+            position: absolute; 
+            top: 15px; 
+            right: 15px; 
+            background: linear-gradient(45deg, #4CAF50, #45a049); 
+            color: white; 
+            padding: 4px 12px; 
+            border-radius: 18px; 
+            font-size: 0.75rem; 
+            font-weight: bold; 
+            box-shadow: 0 3px 10px rgba(76,175,80,0.4); 
+        }
+
+        /* Skeleton loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%) !important;
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-left-color: #ccc !important;
+        }
+        .skeleton::before { content: '📚' !important; opacity: 0.05 !important; }
+        .skeleton .skeleton-badge, .skeleton-text, .skeleton-icon {
+            background: linear-gradient(90deg, #e0e0e0 25%, #d0d0d0 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            height: 12px;
+            margin: 4px 0;
+        }
+        .skeleton-badge { width: 50px; height: 16px; position: absolute; top: 15px; right: 15px; }
+        .skeleton-icon { width: 60px; height: 60px; margin: 0 auto 8px; border-radius: 50%; }
+        .skeleton-text:nth-child(3) { width: 80%; }
+        .skeleton-text:last-child { width: 70%; font-size: 0.8rem; }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Overlay */
+        .overlay { position: fixed; display: none; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0,0,0,0.6); z-index: 999; backdrop-filter: blur(5px); }
+        .overlay.active { display: block; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .course-container { 
+                grid-template-columns: 1fr; 
+                gap: 25px; 
+                padding: 40px 20px; 
+            }
+            .course-card { 
+                width: 260px;
+                height: 260px;
+                padding: 22px 18px; 
+            }
+            .button-bar { flex-wrap: wrap; gap: 15px; padding: 20px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-logo-group">
+            <img src="{{ url_for('static', filename='cea logo.png') }}" alt="CEA Logo">
+            <div><strong>CEA</strong><br><small>DIGITAL LIBRARY</small></div>
+        </div>
+        <div class="nav-title-center">
+            <h1>Course Categories</h1>
+            <small>Browse Available Books by Engineering Discipline</small>
+        </div>
+        <div class="nav-icons">
+        </div>
+    </div>
+
+    <!-- Menu removed per request -->
+    <div id="menuOverlay" class="overlay" onclick="toggleMenu()"></div>
+
+    <div class="button-bar">
+        <a href="/home" class="nav-pill">HOME</a>
+        <a href="/courses" class="nav-pill active">COURSES</a>
+        <a href="/books" class="nav-pill">BOOKS</a>
+        <a href="/profile" class="nav-pill">PROFILE</a>
+    </div>
+
+    <div class="course-container" id="courseContainer">
+        <!-- Dynamic course cards loaded here -->
+        <div class="course-card skeleton" style="visibility: visible;">
+            <div class="skeleton-badge"></div>
+            <div class="skeleton-icon"></div>
+            <h3 class="skeleton-text"></h3>
+            <p class="skeleton-text"></p>
+        </div>
+        <div class="course-card skeleton" style="visibility: visible;"></div>
+        <div class="course-card skeleton" style="visibility: visible;"></div>
+    </div>
+
+    <script>
+        // Icon and description maps
+        const iconMap = {
+            'ARCHITECTURE': '🏛️',
+            'CIVIL ENGINEERING': '🏗️',
+            'COMPUTER ENGINEERING': '💻',
+            'ELECTRICAL ENGINEERING': '⚡',
+            'ELECTRONICS ENGINEERING': '📡',
+            'MECHANICAL ENGINEERING': '🔧'
+        };
+        const displayMap = {
+            'ARCHITECTURE': 'Architecture',
+            'CIVIL ENGINEERING': 'Civil Engineering',
+            'COMPUTER ENGINEERING': 'Computer Engineering',
+            'ELECTRICAL ENGINEERING': 'Electrical Engineering',
+            'ELECTRONICS ENGINEERING': 'Electronics Engineering',
+            'MECHANICAL ENGINEERING': 'Mechanical Engineering'
+        };
+        const descMap = {
+            'ARCHITECTURE': 'Design principles, building construction, and architectural theory.',
+            'CIVIL ENGINEERING': 'Structural analysis, steel design, and materials strength.',
+            'COMPUTER ENGINEERING': 'Digital logic, networks, and data structures fundamentals.',
+            'ELECTRICAL ENGINEERING': 'Circuit analysis and power systems principles.',
+            'ELECTRONICS ENGINEERING': 'Digital signal processing and circuit design.',
+            'MECHANICAL ENGINEERING': 'Thermodynamics, heat transfer, and mechanical design fundamentals.'
+        };
+
+        // Load courses dynamically
+        async function loadCourses() {
+            try {
+                const container = document.getElementById('courseContainer');
+                container.innerHTML = ''; // Clear skeletons
+                
+                const response = await fetch('/api/courses');
+                const data = await response.json();
+                
+                data.courses.forEach(course => {
+                    const displayName = displayMap[course.name] || course.name.replace(/^\w/, c => c.toUpperCase());
+                    const icon = iconMap[course.name] || '📚';
+                    const desc = descMap[course.name] || 'Explore available books';
+                    
+                    const link = document.createElement('a');
+                    link.href = `/courses?course=${encodeURIComponent(course.name)}`;
+                    link.style.textDecoration = 'none';
+                    
+                    const card = document.createElement('div');
+                    card.className = 'course-card';
+                    card.setAttribute('data-icon', icon);
+                    card.innerHTML = `
+                        <div class="course-badge">${course.count} Book${course.count > 1 ? 's' : ''}</div>
+                        <h3>${displayName}</h3>
+                        <p>${desc}</p>
+                    `;
+                    link.appendChild(card);
+                    container.appendChild(link);
+                });
+            } catch (error) {
+                console.error('Failed to load courses:', error);
+                document.getElementById('courseContainer').innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">Failed to load courses. Please refresh.</p>';
+            }
+        }
+
+        // Init on load
+        window.addEventListener('load', loadCourses);
+
+        // Smooth menu toggle
+        function toggleMenu() {
+            const sidebar = document.getElementById("sideMenu");
+            const overlay = document.getElementById("menuOverlay");
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+    </script>
+</body>
+</html>

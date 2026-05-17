@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - EngiArch Books</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='clean.css') }}">
+    <style>
+        body {
+            margin: 0; 
+            font-family: 'Times New Roman', Times, serif;
+            background: linear-gradient(180deg, lch(47.14% 34.48 142.12) 0%, #0e240f 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            padding: 30px 0 0 40px;
+            z-index: 2;
+        }
+
+        .logo {
+            width: 160px;
+            height: auto;
+            margin-right: 25px;
+        }
+
+        .title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-title {
+            font-size: 6.5rem;
+            font-weight: bold;
+            margin: 0;
+            line-height: 0.9;
+            color: black;
+        }
+
+        .sub-title {
+            font-size: 1.8rem;
+            margin-top: 5px;
+            color: black;
+            font-weight: normal;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .signup-box {
+            background-color: #528053;
+            padding: 60px 50px;
+            width: 450px;
+            height: auto;
+            min-height: 650px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+
+        h2 { 
+            font-size: 2.2rem; 
+            line-height: 1.1;
+            margin-bottom: 15px; 
+            margin-top: 0; 
+            font-weight: 600; 
+            color: black;
+            white-space: nowrap;
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="password"], select {
+            width: 100%;
+            padding: 18px 20px 18px 50px;
+            border: none;
+            background-color: #bebaba;
+            box-sizing: border-box;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #333;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, select:focus {
+            outline: none;
+            background-color: #f0f0f0;
+            box-shadow: 0 0 15px rgba(82, 128, 83, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.4rem;
+            color: #555;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #555;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .reg-btn {
+            width: 85%;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #4a7c4a, #528053);
+            border: none;
+            font-family: 'Times New Roman', serif;
+            font-weight: bold;
+            font-size: 1.6rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(82, 128, 83, 0.5);
+        }
+
+        .reg-btn:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(82, 128, 83, 0.6);
+        }
+
+        .login-link {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .login-link:hover {
+            color: black;
+        }
+
+        .alert-error { color: #ff4444; }
+        .alert-success { color: #44ff44; }
+        .flash-alert { margin-bottom: 20px; text-align: center; font-size: 1.1rem; font-weight: bold; }
+        .register-form { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+        .bg-decor {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            font-size: 7rem;
+            color: rgba(0, 0, 0, 0.15);
+            transform: rotate(-5deg);
+            z-index: 1;
+            pointer-events: none;
+            text-align: right;
+            line-height: 0.8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 4;
+            color: black;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .signup-box { width: 90vw; padding: 40px 30px; min-height: 80vh; }
+            .main-title { font-size: 4rem; }
+            h2 { font-size: 2.4rem; }
+            .reg-btn { font-size: 1.4rem; padding: 16px 24px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='cea logo.png') }}" alt="CEA Logo" class="logo">
+        <div class="title-group">
+            <div class="main-title">EngiArch Books</div>
+            <div class="sub-title">COLLEGE OF ENGINEERING AND ARCHITECTURE</div>
+        </div>
+    </header>
+
+    <main>
+        <div class="signup-box">
+            <h2>CREATE ACCOUNT</h2>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} flash-alert">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            <form action="/register" method="POST" class="register-form">
+                <div class="input-group">
+                    <span class="input-icon">👤</span>
+                    <input type="text" name="name" placeholder="Full Name" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <span class="input-icon">🆔</span>
+                    <input type="text" name="student_no" placeholder="Student Number" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" name="password" placeholder="Password (4+ numbers)" id="signup-password" required autocomplete="off">
+                    <button type="button" class="password-toggle" onclick="togglePasswordSignup()">👁</button>
+                </div>
+                <div class="input-group">
+                    <span class="input-icon">🎓</span>
+                    <select name="course_year" id="course-year-select" required style="padding: 18px 20px 18px 50px; appearance: none; background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDFMNiA2TDExIDEiIGZpbGw9IiM1NTUiIHN0cm9rZT0iIzU1NSIgc3Ryb2tlLXdpZHRoPSIxIi8+Cjwvc3ZnPgo='); background-repeat: no-repeat; background-position: right 18px center; background-size: 12px;" aria-label="Course & Year">
+                        <option value="">Loading courses...</option>
+                    </select>
+                </div>
+                <script>
+                    fetch('/api/courses_public')
+                        .then(r => r.json())
+                        .then(data => {
+                            const select = document.getElementById('course-year-select');
+                            select.innerHTML = '<option value="">Select Course & Year</option>';
+                            data.forEach(course => {
+                                ['1ST YEAR', '2ND YEAR', '3RD YEAR', '4TH YEAR'].forEach(year => {
+                                    const option = document.createElement('option');
+                                    option.value = course.name + ' - ' + year;
+                                    option.textContent = course.name + ' - ' + year;
+                                    select.appendChild(option);
+                                });
+                            });
+                        })
+                        .catch(() => {
+                            document.getElementById('course-year-select').innerHTML = '<option value="">Unavailable</option>';
+                        });
+                </script>
+
+
+                <button type="submit" class="reg-btn">REGISTER</button>
+
+            </form>
+            <div style="width: 85%; margin-top: 10px; text-align:center;">
+                <a href="/" class="login-link" style="text-decoration:none;">Back to Login</a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <div class="bg-decor">
+        ∑ + ÷ <br>
+        ∫ π √ <br>
+    </div>
+    <footer>PRODUCED BY BSCpE-2B</footer>
+
+    <script>
+        const pwInputSignup = document.getElementById('signup-password');
+        pwInputSignup.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        function togglePasswordSignup() {
+            const input = document.getElementById('signup-password');
+            const toggle = event.target;
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggle.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                toggle.textContent = '👁';
+            }
+        }
+    </script>
+</body>
+</html>

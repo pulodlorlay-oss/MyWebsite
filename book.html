@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books - EngiArch Digital Library</title>
+    <style>
+        :root {
+            --primary-green: #8fa883;
+            --dark-green: #4d6345;
+            --bg-grey: #d1d9d1;
+            --card-bg: #9fb398;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Times New Roman', serif;
+            background-color: var(--bg-grey);
+            overflow-x: hidden;
+        }
+
+        /* HEADER - Consistent with other pages */
+        header {
+            background-color: var(--primary-green);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #6b8e61;
+        }
+
+        .logo-section { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .logo-section img { 
+            width: 50px; 
+            height: auto; 
+        }
+        .logo-text { 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            line-height: 1.2; 
+        }
+
+        .title-section { 
+            text-align: center; 
+            flex-grow: 1; 
+        }
+        .title-section h1 { 
+            margin: 0; 
+            font-size: 1.8rem; 
+        }
+        .title-section p { 
+            margin: 0; 
+            font-size: 0.7rem; 
+            letter-spacing: 1px; 
+        }
+
+        .icons { 
+            display: flex; 
+            gap: 15px; 
+            font-size: 1.8rem; 
+            cursor: pointer; 
+        }
+
+        /* NAVIGATION */
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px 0;
+            background-color: var(--bg-grey);
+        }
+
+        .nav-btn {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 10px 40px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover { 
+            background-color: var(--dark-green); 
+        }
+        .nav-btn.active { 
+            background-color: var(--dark-green); 
+        }
+
+        /* SEARCH FILTER */
+        .filter-section {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        .filter-form {
+            display: inline-block;
+        }
+        .filter-select {
+            padding: 10px 15px;
+            border-radius: 25px;
+            border: 2px solid var(--primary-green);
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+        .filter-btn {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* BOOKS GRID - FIXED & RESPONSIVE */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .book-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #666;
+            overflow: hidden;
+        }
+
+        .book-cover a {
+            display: block;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .lightbox.show { display: flex; }
+        .lightbox-img {
+            max-width: 92vw;
+            max-height: 86vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            background: #fff;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            border-radius: 999px;
+            width: 42px;
+            height: 42px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+
+        .book-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: var(--dark-green);
+        }
+
+        .book-author {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .book-status {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .status-available {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .status-borrowed {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .borrow-btn {
+            background-color: var(--dark-green);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        .borrow-btn:hover {
+            background-color: #3a4f30;
+        }
+
+        .no-books {
+            text-align: center;
+            padding: 60px;
+            color: var(--dark-green);
+            font-size: 1.2rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .books-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .nav-bar {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='cea logo.png') }}" alt="CEA Logo">
+            <div class="logo-text">CEA<br>DIGITAL LIBRARY</div>
+        </div>
+        <div class="title-section">
+            <h1>EngiArch Books</h1>
+            <p>Books Available for Borrowing</p>
+        </div>
+        <span onclick="toggleMenu()">☰</span>
+        </div>
+    </header>
+
+    <!-- Menu removed per request -->
+    <div id="menuOverlay" class="overlay" onclick="toggleMenu()"></div>
+
+    <nav class="nav-bar">
+        <a href="/home" class="nav-btn">HOME</a>
+        <a href="/courses" class="nav-btn">COURSES</a>
+        <a href="/books" class="nav-btn active">BOOKS</a>
+        <a href="/profile" class="nav-btn">PROFILE</a>
+    </nav>
+
+    <!-- SIDEBAR (simple version matching other pages) -->
+    <div id="sidebar" style="position:fixed;right:-300px;top:0;width:300px;height:100%;background:var(--primary-green);transition:0.3s;z-index:1000;">
+        <!-- Sidebar content here if needed -->
+        <div style="padding:20px;color:white;font-weight:bold;">User Menu</div>
+    </div>
+
+    <!-- FILTER FORM -->
+    <div class="filter-section">
+        <form method="POST" class="filter-form">
+            <select name="course_filter" class="filter-select">
+                <option value="">All Courses</option>
+                <option value="COMPUTER ENGINEERING">Computer Engineering</option>
+                <option value="CIVIL ENGINEERING">Civil Engineering</option>
+                <option value="ARCHITECTURE">Architecture</option>
+                <option value="MECHANICAL ENGINEERING">Mechanical Engineering</option>
+            </select>
+            <button type="submit" class="filter-btn">Filter</button>
+        </form>
+    </div>
+
+    <!-- DYNAMIC BOOKS GRID -->
+    {% if books %}
+        <div class="books-grid">
+            {% for book in books %}
+            <div class="book-card">
+                {% if book.course_category == 'CIVIL ENGINEERING' %}
+                    <div class="book-cover">
+                        <a href="javascript:void(0)" onclick='openLightbox("{{ url_for('static', filename='civil-engineering/' ~ book.title ~ '.jpg') }}")' title="View full book image" aria-label="View full book image">
+
+
+                            <img class="book-cover-img" src="{{ url_for('static', filename='civil-engineering/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+
+                        </a>
+                    </div>
+
+                {% elif book.course_category == 'ARCHITECTURE' %}
+                    <div class="book-cover">
+                        {% if book.title == 'Theory of Architecture' %}
+                            <img src="{{ url_for('static', filename='architecture/the theory of architecture.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Building Construction' %}
+                            <img src="{{ url_for('static', filename='architecture/building construction.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'AutoCAD Architecture' %}
+                            <img src="{{ url_for('static', filename='architecture/autocad for architecture.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Architectural Design' %}
+                            <img src="{{ url_for('static', filename='architecture/architectural graphic standards.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Architectural Graphics' %}
+                            <img src="{{ url_for('static', filename='architecture/a pattern language.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% else %}
+                            <img src="{{ url_for('static', filename='architecture/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% endif %}
+                    </div>
+                {% elif book.course_category == 'COMPUTER ENGINEERING' %}
+                    <div class="book-cover">
+                        {% if book.title == 'Computer Networks' %}
+                            <img src="{{ url_for('static', filename='computer-engineering/' ~ 'computer networks.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Data Structures and Algorithms' %}
+                            <img src="{{ url_for('static', filename='computer-engineering/' ~ 'microcomputer hardware design.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Digital Logic Design' %}
+                            <img src="{{ url_for('static', filename='computer-engineering/' ~ 'programming logic formulation.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Operating Systems' %}
+                            <img src="{{ url_for('static', filename='computer-engineering/' ~ 'Operating Systems.webp') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Introduction to Programming' %}
+                            <img src="{{ url_for('static', filename='computer-engineering/' ~ 'software engineering.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Computer Organization' %}
+                            <img src="{{ url_for('static', filename='computer-engineering/' ~ 'Computer Organization.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Database Systems' %}
+                            <img src="{{ url_for('static', filename='computer-engineering/' ~ 'Database Systems.webp') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Embedded Systems' %}
+                            <img src="{{ url_for('static', filename='computer-engineering/' ~ 'Embedded Systems.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% else %}
+                            <img src="{{ url_for('static', filename='computer-engineering/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% endif %}
+                    </div>
+                {% elif book.course_category == 'ELECTRONICS ENGINEERING' %}
+                    <div class="book-cover">
+                        {% if book.title == 'Electronic Devices' %}
+                            <img src="{{ url_for('static', filename='electronics-engineering/' ~ 'modern digital electronics.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Digital Signal Processing' %}
+                            <img src="{{ url_for('static', filename='electronics-engineering/' ~ 'digital signal processing.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Analog Circuits' %}
+                            <img src="{{ url_for('static', filename='electronics-engineering/' ~ 'electronic communication systems.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Microelectronics' %}
+                            <img src="{{ url_for('static', filename='electronics-engineering/' ~ 'microelectronic circuits.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Communication Systems' %}
+                            <img src="{{ url_for('static', filename='electronics-engineering/' ~ 'communication systems.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Principles of Electronic Communication Systems' %}
+                            <img src="{{ url_for('static', filename='electronics-engineering/' ~ 'electronic communication systems.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% else %}
+                            <img src="{{ url_for('static', filename='electronics-engineering/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% endif %}
+                    </div>
+                {% elif book.course_category == 'ELECTRICAL ENGINEERING' %}
+                    <div class="book-cover">
+                        {% if book.title == 'Circuit Analysis' or book.title == 'Introduction to Electric Circuits' %}
+                            <img src="{{ url_for('static', filename='electrical-engineering/' ~ 'fundamentals of electric circuits.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Electromagnetics' or book.title == 'Electromagnetic Fields and Waves' %}
+                            <img src="{{ url_for('static', filename='electrical-engineering/' ~ 'field and wave electromagnetics.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Power Systems' %}
+                            <img src="{{ url_for('static', filename='electrical-engineering/' ~ 'principles of electric machines and power electronics.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Signals and Systems' %}
+                            <img src="{{ url_for('static', filename='electrical-engineering/' ~ 'digital control of dynamic systems.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Control Systems' %}
+                            <img src="{{ url_for('static', filename='electrical-engineering/' ~ 'engineering circuit analysis.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% else %}
+                            <img src="{{ url_for('static', filename='electrical-engineering/' ~ book.title ~ '.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% endif %}
+                    </div>
+                {% elif book.course_category == 'MECHANICAL ENGINEERING' %}
+                    <div class="book-cover">
+                        {% if book.title == 'Thermodynamics' %}
+                            <img src="{{ url_for('static', filename='mechanical-engineering/' ~ 'control systems engineering.png') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Fluid Mechanics' %}
+                            <img src="{{ url_for('static', filename='mechanical-engineering/' ~ 'Fluid Mechanics.jpg') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Heat Transfer' %}
+                            <img src="{{ url_for('static', filename='mechanical-engineering/' ~ 'Manufacturing Engineering.png') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Strength of Materials' %}
+                            <img src="{{ url_for('static', filename='mechanical-engineering/' ~ 'Engineering Mechanics Dynamics.png') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% elif book.title == 'Machine Design' %}
+                            <img src="{{ url_for('static', filename='mechanical-engineering/' ~ 'Machine Design.png') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% else %}
+                            <img src="{{ url_for('static', filename='mechanical-engineering/' ~ book.title ~ '.png') }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 8px;" />
+                        {% endif %}
+                    </div>
+                {% else %}
+        <div class="book-cover">📚 {{ book.title[:20] }}...</div>
+                {% endif %}
+
+                <div class="book-title">{{ book.title }}</div>
+                <div class="book-author">by {{ book.author }}</div>
+                <div class="book-status status-available">
+                    Available - {{ book.course_category }}
+                </div>
+                <a href="{{ url_for('borrow_book', book_id=book.id) }}" class="borrow-btn">
+                    BORROW BOOK
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-books">
+            No available books matching your filter. Try another course!
+        </div>
+    {% endif %}
+
+    <script>
+        function openLightbox(src) {
+            const box = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            if (!box || !img || !src) return;
+            img.src = src;
+            box.classList.add('show');
+        }
+
+        function closeLightbox() {
+            const box = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            if (!box) return;
+            box.classList.remove('show');
+            if (img) img.src = '';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        function toggleSidebar() {
+
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.right = sidebar.style.right === '0px' ? '-300px' : '0px';
+        }
+
+        // Close when clicking outside the image
+        window.addEventListener('click', (e) => {
+            const box = document.getElementById('lightbox');
+            if (!box) return;
+            if (box.classList.contains('show') && e.target === box) {
+                closeLightbox();
+            }
+        });
+    </script>
+
+</body>
+</html>

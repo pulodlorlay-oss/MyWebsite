@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - EngiArch Books</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <style>
+        /* Page-specific only */
+        .hero-text p { color: #4d6345; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-logo-group">
+            <img src="{{ url_for('static', filename='cea logo.png') }}" alt="Logo">
+            <div><strong>CEA</strong><br><small>DIGITAL LIBRARY</small></div>
+        </div>
+        <div class="nav-title-center">
+            <h1 class="hero-main-title">EngiArch Books</h1>
+            <small>COLLEGE OF ENGINEERING AND ARCHITECTURE</small>
+        </div>
+        <div class="nav-icons">
+            <span onclick="toggleMenu()">☰</span>
+        </div>
+    </div>
+
+    {% include 'menu.html' %}
+    <div id="menuOverlay" class="overlay" onclick="toggleMenu()"></div>
+
+    <div class="button-bar">
+        <a href="/home" class="nav-pill active">HOME</a>
+        <a href="/courses" class="nav-pill">COURSES</a>
+        <a href="/books" class="nav-pill">BOOKS</a>
+        <a href="/profile" class="nav-pill">PROFILE</a>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="search-container">
+        <form action="/search" method="GET" class="search-wrapper">
+            <input type="text" class="search-bar" name="q" placeholder="Search for books..." required>
+        </form>
+        <div class="hero-text">
+            <p>Search across all EngiArch books by title, author, or course!</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const sidebar = document.getElementById("sideMenu");
+            const overlay = document.getElementById("menuOverlay");
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+        }
+    </script>
+</body>
+</html>

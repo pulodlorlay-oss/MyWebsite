@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - EngiArch Books</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <style>
+        /* Page-specific only */
+        .hero-text p { color: #4d6345; margin-top: 10px; }
+
+        /* Polished transition */
+        body { opacity: 0; transition: opacity 450ms ease; }
+        body.loaded { opacity: 1; }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 550ms ease, transform 550ms ease;
+        }
+        .fade-in-up.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .button-bar a { transition: transform 180ms ease, box-shadow 180ms ease; }
+        .button-bar a:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
+    </style>
+
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-logo-group">
+            <img src="{{ url_for('static', filename='cea logo.png') }}" alt="Logo">
+            <div><strong>CEA</strong><br><small>DIGITAL LIBRARY</small></div>
+        </div>
+        <div class="nav-title-center">
+        </div>
+
+        <div class="nav-icons">
+            <span onclick="toggleMenu()">☰</span>
+        </div>
+    </div>
+
+    {% include 'menu.html' %}
+    <div id="menuOverlay" class="overlay" onclick="toggleMenu()"></div>
+
+    <div class="button-bar">
+        <a href="/home" class="nav-pill active">HOME</a>
+        <a href="/courses" class="nav-pill">COURSES</a>
+        <a href="/books" class="nav-pill">BOOKS</a>
+        <a href="/profile" class="nav-pill">PROFILE</a>
+    </div>
+
+
+
+    <div class="search-container">
+        <form action="/search" method="GET" class="search-wrapper">
+            <input type="text" class="search-bar" name="q" placeholder="Search for books..." required>
+        </form>
+        <div class="hero-text">
+            <p>Search across all EngiArch books by title, author, or course!</p>
+            <h1 class="hero-main-title" style="font-size: 6rem; margin: 20px 0;">EngiArch Books</h1>
+            <small style="font-size: 1.5rem;">COLLEGE OF ENGINEERING AND ARCHITECTURE</small>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+
+            const hero = document.querySelector('.search-container');
+            if (hero) {
+                hero.classList.add('fade-in-up', 'show');
+            }
+        });
+
+        function toggleMenu() {
+            const sidebar = document.getElementById("sideMenu");
+            const overlay = document.getElementById("menuOverlay");
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+        }
+    </script>
+
+</body>
+</html>
+
